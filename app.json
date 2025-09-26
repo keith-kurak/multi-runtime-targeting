@@ -2,7 +2,7 @@
   "expo": {
     "name": "multi-runtime-targeting",
     "slug": "multi-runtime-targeting",
-    "version": "1.0.0",
+    "version": "7.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "multiruntimetargeting",
@@ -43,6 +43,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e034587e-e1ee-45ec-8bc5-84c6128889e8"
+      }
+    },
+    "owner": "expo-production"
   }
 }
