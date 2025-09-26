@@ -4,7 +4,7 @@
 1. Increment minor version (7.1.0)
 2. Update runtime version
 3. Create and push release branch
-4. `eas build --profile production --platform ios`
+4. `eas build --profile production --platform ios --message 7.1.0`
 
 ## Update
 
