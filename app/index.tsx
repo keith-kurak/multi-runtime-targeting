@@ -21,7 +21,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Version: {Constants.expoConfig?.version || "unknown"}</Text>
+      <Text style={{ fontSize: 20 }}>Version: {Constants.expoConfig?.version || "unknown"}</Text>
       <Button onPress={checkAndFetchUpdate} title="Update if you can" />
     </View>
   );
