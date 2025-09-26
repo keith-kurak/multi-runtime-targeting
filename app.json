@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.expoproduction.multiruntimetargeting",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -50,6 +54,12 @@
         "projectId": "e034587e-e1ee-45ec-8bc5-84c6128889e8"
       }
     },
-    "owner": "expo-production"
+    "owner": "expo-production",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e034587e-e1ee-45ec-8bc5-84c6128889e8"
+    }
   }
 }
