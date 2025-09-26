@@ -55,9 +55,7 @@
       }
     },
     "owner": "expo-production",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "7.1.0",
     "updates": {
       "url": "https://u.expo.dev/e034587e-e1ee-45ec-8bc5-84c6128889e8"
     }

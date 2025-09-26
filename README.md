@@ -2,8 +2,9 @@
 
 ## Binary release
 1. Increment minor version (7.1.0)
-2. Create and push release branch
-3. `eas build --profile production --platform ios`
+2. Update runtime version
+3. Create and push release branch
+4. `eas build --profile production --platform ios`
 
 ## Update
 1. Increment patch version (7.1.1)
