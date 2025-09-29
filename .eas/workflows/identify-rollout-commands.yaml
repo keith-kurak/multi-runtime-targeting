@@ -1,0 +1,57 @@
+name: Identify complete rollout and rollback commands for update branch
+
+jobs:
+  collect_rollout_commands:
+    name: Collect rollout commands
+    outputs:
+      complete_rollout_command: ${{ steps.create_complete_rollout_command.outputs.complete_rollout_command }}
+      rollback_command: ${{ steps.create_rollback_command.outputs.rollback_command }}
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - id: get_runtime_version
+        run: set-env RUNTIME_VERSION "$(jq -r '.expo.runtimeVersion' app.json)"
+      - id: show_runtime_version
+        run: 'echo "Runtime version: $RUNTIME_VERSION"'
+      - id: get_update_version
+        run: set-env UPDATE_VERSION "$(jq -r '.expo.version' app.json)"
+      - id: show_update_version
+        run: 'echo "Update version: $UPDATE_VERSION"'
+      - id: get_update_list
+        run: set-env UPDATE_LIST_COMMAND "npx eas-cli@latest update:list --branch=production --json --non-interactive | jq -r '.currentPage[] | select(.runtimeVersion == \"$RUNTIME_VERSION\") | .group'"
+      - id: get_update_id
+        run: set-env UPDATE_ID $(eval "$UPDATE_LIST_COMMAND")
+      - id: show_update_id
+        run: 'echo "Update ID: $UPDATE_ID"'
+      - id: create_complete_rollout_command
+        run: |
+          set-output complete_rollout_command "eas update:edit --branch production --group $UPDATE_ID --percent 100 --non-interactive"
+      - id: create_rollback_command
+        run: |
+          set-output rollback_command "eas update:revert-update-rollout $UPDATE_ID --message 'Rollback $UPDATE_VERSION'"
+  output_rollout_commands:
+    type: doc
+    name: Output rollout commands
+    needs: [collect_rollout_commands]
+    params:
+      md: |
+        ## Complete Rollout Command
+        ```
+        ${{ needs.collect_rollout_commands.outputs.complete_rollout_command }}
+        ```
+
+        ## Rollback Command
+        ```
+        ${{ needs.collect_rollout_commands.outputs.rollback_command }}
+        ```
+  output_rollout_commands_2:
+    name: Output rollout commands (2)
+    needs: [collect_rollout_commands]
+    steps:
+      - run: |
+          echo "Complete Rollout Command:"
+          echo "${{ needs.collect_rollout_commands.outputs.complete_rollout_command }}"
+          echo ""
+          echo "Rollback Command:"
+          echo "${{ needs.collect_rollout_commands.outputs.rollback_command }}"
+          echo ""

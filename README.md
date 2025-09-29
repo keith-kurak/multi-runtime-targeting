@@ -15,13 +15,23 @@
 4. Select group (need to automate this)
 
 ## Complete rollout
-1. `eas update:edit --branch production --rollout-percentage=100`, set 100%
+1. Get update ID via:
+```
+eas update:list --branch=production --json --non-interactive \
+  | jq -r '.currentPage[] | select(.runtimeVersion == "7.3.0") | .group'
+  ```
+2. `eas update:edit [updateId] --branch production --rollout-percentage=100`, set 100%
 
 ## Revert rollout 
-1. `eas update:revert-update-rollout --message "Revert 7.1.1 to 7.1.0`
-2. Select channel
-3. Select group (need to automate this)
+1. Get update ID via:
+```
+eas update:list --branch=production --json --non-interactive \
+  | jq -r '.currentPage[] | select(.runtimeVersion == "7.3.0") | .group'
+```
+2. `eas update:revert-update-rollout [updateId] --message "Revert 7.1.1 to 7.1.0`
+3. Select channel
+4. Select group (need to automate this)
 
-`eas update:list --branch=production --limit=1 --json --non-interactive | jq -r '.currentPage[0].group'`
+`eas update:list --branch=production --json --non-interactive | jq -r '.currentPage[0].group'`
 
 also need to handle null case
