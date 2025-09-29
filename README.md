@@ -34,4 +34,7 @@ eas update:list --branch=production --json --non-interactive \
 
 `eas update:list --branch=production --json --non-interactive | jq -r '.currentPage[0].group'`
 
-also need to handle null case
+
+## TODO
+- also need to handle null case
+- identify when you're on the wrong branch
