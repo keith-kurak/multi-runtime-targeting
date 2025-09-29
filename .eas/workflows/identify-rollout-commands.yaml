@@ -28,7 +28,7 @@ jobs:
           set-output complete_rollout_command "eas update:edit --branch production --group $UPDATE_ID --percent 100 --non-interactive"
       - id: create_rollback_command
         run: |
-          set-output rollback_command "eas update:revert-update-rollout $UPDATE_ID --message 'Rollback $UPDATE_VERSION'"
+          set-output rollback_command "eas update:revert-update-rollout --group=$UPDATE_ID --message 'Rollback $UPDATE_VERSION' --non-interactive"
   output_rollout_commands:
     type: doc
     name: Output rollout commands
