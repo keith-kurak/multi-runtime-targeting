@@ -1,0 +1,39 @@
+name: Start rollout
+
+jobs:
+  generate_rollout_command:
+    name: Generate rollout command
+    if: ${{ inputs.rollout_percent > 0 }}
+    outputs:
+      rollout_command: ${{ steps.create_rollout_command.outputs.rollout_command }}
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - id: get_runtime_version
+        run: set-env RUNTIME_VERSION "$(jq -r '.expo.runtimeVersion' app.json)"
+      - id: show_runtime_version
+        run: 'echo "Runtime version: $RUNTIME_VERSION"'
+      - id: get_update_version
+        run: set-env UPDATE_VERSION "$(jq -r '.expo.version' app.json)"
+      - id: show_update_version
+        run: 'echo "Update version: $UPDATE_VERSION"'
+      - id: create_rollout_command
+        run: |
+          set-output rollout_command "eas update --channel production --rollout-percentage=10 --message $UPDATE_VERSION"
+  simulate_rollout:
+    name: Simulate start of rollout
+    needs: [generate_rollout_command]
+    steps:
+      - run: |
+          echo "Did the following steps:"
+          echo "1. Checkout branch {{ inputs.version }}"
+          echo "2. Restored dependencies"
+          echo "3. Ran this command to complete rollout to 10%:"
+          echo "${{ needs.generate_rollout_command.outputs.rollout_command }}"
+          echo ""
+  # do_rollout:
+  #   name: Do the actual rollout
+  #   steps:
+  #     - uses: eas/checkout
+  #     - uses: eas/install_node_modules
+  #     - run: eval "${{ needs.generate_rollout_command.outputs.rollout_command }}"

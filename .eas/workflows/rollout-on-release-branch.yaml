@@ -51,6 +51,7 @@ jobs:
     name: Publishing update
     type: update
     params:
-      branch: production
+      channel: production
       message: ${{ needs.get_update_version.outputs.update_version }}
+      # rollout-percentage: 10
       # input can later be replaced with defaults.appJson 
