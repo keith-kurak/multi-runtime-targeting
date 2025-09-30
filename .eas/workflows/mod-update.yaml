@@ -51,7 +51,7 @@ jobs:
           echo "${{ needs.generate_rollout_command.outputs.rollout_command }}"
           echo ""
   generate_revert_command:
-    name: Generate rollout command
+    name: Generate revert command
     if: ${{ inputs.rollout_percent == 0 }}
     outputs:
       rollout_command: ${{ steps.create_rollout_command.outputs.rollout_command }}
@@ -77,7 +77,7 @@ jobs:
           set-output rollout_command "eas update:revert-update-rollout --group=$UPDATE_ID --message 'Rollback ${{ inputs.version }}' --non-interactive"
   
   simulate_revert:
-    name: Simulate rollout
+    name: Simulate revert
     needs: [generate_revert_command]
     steps:
       - run: |
