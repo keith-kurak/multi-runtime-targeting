@@ -3,8 +3,8 @@ name: Rollout update on release branch
 on:
   push:
     branches:
-      - *.*.*
-      - !*.*.0
+      - "*.*.*"
+      - "!*.*.0"
 
 jobs:
   fingerprint:
@@ -54,5 +54,3 @@ jobs:
       branch: production
       message: ${{ needs.get_update_version.outputs.update_version }}
       # input can later be replaced with defaults.appJson 
-
-  # TODO: add version source skip
