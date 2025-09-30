@@ -35,9 +35,10 @@ jobs:
     if: ${{ needs.get_android_build.outputs.build_id && needs.get_ios_build.outputs.build_id }}
     type: doc
     params:
-      md: "Fingerprint ompatible builds found. Proceeding with OTA update"
+      md: "Fingerprint compatible builds found. Proceeding with OTA update"
   get_update_version:
     name: Get update version
+    needs: [existing_matching_builds_found]
     outputs:
       update_version: ${{ steps.get_update_version.outputs.update_version }}
     steps:
