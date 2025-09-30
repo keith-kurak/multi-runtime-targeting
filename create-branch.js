@@ -26,4 +26,4 @@ run(`git checkout -b ${branchName}`);
 run(`git commit --allow-empty -m "${branchName}"`);
 
 // Push the branch + commit to origin
-run(`git push -u origin ${branchName}`);
+// run(`git push -u origin ${branchName}`);
