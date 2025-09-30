@@ -2,7 +2,7 @@
   "expo": {
     "name": "multi-runtime-targeting",
     "slug": "multi-runtime-targeting",
-    "version": "7.4.0",
+    "version": "7.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "multiruntimetargeting",
@@ -56,7 +56,7 @@
       }
     },
     "owner": "expo-production",
-    "runtimeVersion": "7.4.0",
+    "runtimeVersion": "7.5.0",
     "updates": {
       "url": "https://u.expo.dev/e034587e-e1ee-45ec-8bc5-84c6128889e8"
     }
