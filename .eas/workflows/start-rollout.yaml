@@ -3,7 +3,6 @@ name: Start rollout
 jobs:
   generate_rollout_command:
     name: Generate rollout command
-    if: ${{ inputs.rollout_percent > 0 }}
     outputs:
       rollout_command: ${{ steps.create_rollout_command.outputs.rollout_command }}
     steps:
@@ -26,7 +25,7 @@ jobs:
     steps:
       - run: |
           echo "Did the following steps:"
-          echo "1. Checkout branch {{ inputs.version }}"
+          echo "1. Checkout branch"
           echo "2. Restored dependencies"
           echo "3. Ran this command to complete rollout to 10%:"
           echo "${{ needs.generate_rollout_command.outputs.rollout_command }}"
