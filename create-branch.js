@@ -24,3 +24,6 @@ run(`git checkout -b ${branchName}`);
 
 // Make an empty commit with the branch name as the message
 run(`git commit --allow-empty -m "${branchName}"`);
+
+// Push the branch + commit to origin
+run(`git push -u origin ${branchName}`);
