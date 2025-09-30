@@ -1,0 +1,89 @@
+name: Progress or revert rollout 
+# Future improvement: ability to dispatch against git branch ref
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: 'Update version to rollout or revert'
+      rollout_percent:
+        type: number
+        required: true
+        description: 'Percent to update rollout to'
+
+jobs:
+  generate_rollout_command:
+    name: Generate rollout command
+    if: ${{ inputs.rollout_percent > 0 }}
+    outputs:
+      rollout_command: ${{ steps.create_rollout_command.outputs.rollout_command }}
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - id: get_runtime_version
+        run: set-env RUNTIME_VERSION "$(jq -r '.expo.runtimeVersion' app.json)"
+      - id: show_runtime_version
+        run: 'echo "Runtime version: $RUNTIME_VERSION"'
+      - id: get_update_version
+        run: set-env UPDATE_VERSION "$(jq -r '.expo.version' app.json)"
+      - id: show_update_version
+        run: 'echo "Update version: $UPDATE_VERSION"'
+      - id: get_update_list
+        run: set-env UPDATE_LIST_COMMAND "npx eas-cli@latest update:list --branch=production --json --non-interactive | jq -r '.currentPage[] | select(.runtimeVersion == \"$RUNTIME_VERSION\") | .group'"
+      - id: get_update_id
+        run: set-env UPDATE_ID $(eval "$UPDATE_LIST_COMMAND")
+      - id: show_update_id
+        run: 'echo "Update ID: $UPDATE_ID"'
+      - id: create_rollout_command
+        run: |
+          set-output rollout_command "eas update:edit --branch production --group $UPDATE_ID --percent ${{ inputs.rollout_percent }} --non-interactive"
+  simulate_rollout:
+    name: Simulate rollout
+    needs: [generate_rollout_command]
+    steps:
+      - run: |
+          echo "Did the following steps:"
+          echo "1. Checkout branch {{ inputs.version }}"
+          echo "2. Restored dependencies"
+          echo "3. Ran this command to complete rollout to ${{ inputs.rollout_percent }}:"
+          echo "${{ needs.generate_rollout_command.outputs.rollout_command }}"
+          echo ""
+  generate_revert_command:
+    name: Generate rollout command
+    if: ${{ inputs.rollout_percent == 0 }}
+    outputs:
+      rollout_command: ${{ steps.create_rollout_command.outputs.rollout_command }}
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - id: get_runtime_version
+        run: set-env RUNTIME_VERSION "$(jq -r '.expo.runtimeVersion' app.json)"
+      - id: show_runtime_version
+        run: 'echo "Runtime version: $RUNTIME_VERSION"'
+      - id: get_update_version
+        run: set-env UPDATE_VERSION "$(jq -r '.expo.version' app.json)"
+      - id: show_update_version
+        run: 'echo "Update version: $UPDATE_VERSION"'
+      - id: get_update_list
+        run: set-env UPDATE_LIST_COMMAND "npx eas-cli@latest update:list --branch=production --json --non-interactive | jq -r '.currentPage[] | select(.runtimeVersion == \"$RUNTIME_VERSION\") | .group'"
+      - id: get_update_id
+        run: set-env UPDATE_ID $(eval "$UPDATE_LIST_COMMAND")
+      - id: show_update_id
+        run: 'echo "Update ID: $UPDATE_ID"'
+      - id: create_rollout_command
+        run: |
+          set-output rollout_command "eas update:revert-update-rollout --group=$UPDATE_ID --message 'Rollback ${{ inputs.version }}' --non-interactive"
+  
+  simulate_revert:
+    name: Simulate rollout
+    needs: [generate_revert_command]
+    steps:
+      - run: |
+          echo "Did the following steps:"
+          echo "1. Checkout branch {{ inputs.version }}"
+          echo "2. Restored dependencies"
+          echo "3. Ran this command to complete rollout to ${{ inputs.rollout_percent }}:"
+          echo "${{ needs.generate_rollout_command.outputs.rollout_command }}"
+          echo ""

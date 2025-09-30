@@ -38,3 +38,4 @@ eas update:list --branch=production --json --non-interactive \
 ## TODO
 - also need to handle null case
 - identify when you're on the wrong branch
+- check if new rollout command also works on branch-based rollouts with embedded update

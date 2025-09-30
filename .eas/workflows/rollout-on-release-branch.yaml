@@ -1,0 +1,58 @@
+name: Rollout update on release branch
+
+on:
+  push:
+    branches:
+      - *.*.*
+      - !*.*.0
+
+jobs:
+  fingerprint:
+    environment: production
+    type: fingerprint
+  ios_get_build:
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.ios_fingerprint_hash }}
+      platform: ios
+      profile: production
+  android_get_build:
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
+      platform: android
+      profile: production
+  existing_matching_builds_not_found:
+    needs: [get_android_build, get_ios_build]
+    if: ${{ !needs.get_android_build.outputs.build_id || !needs.get_ios_build.outputs.build_id }}
+    type: doc
+    params:
+      md: "Fingerprint compatible builds not found. Cannot proceed with update"
+  existing_matching_builds_found:
+    needs: [get_android_build, get_ios_build]
+    if: ${{ needs.get_android_build.outputs.build_id && needs.get_ios_build.outputs.build_id }}
+    type: doc
+    params:
+      md: "Fingerprint ompatible builds found. Proceeding with OTA update"
+  get_update_version:
+    name: Get update version
+    outputs:
+      update_version: ${{ steps.get_update_version.outputs.update_version }}
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - id: get_update_version
+        run: set-output update_version "$(jq -r '.expo.version' app.json)"
+  publish_update:
+    # Future improvement: rollout params on update job (can still be done with custom command)
+    needs: [get_update_version]
+    name: Publishing update
+    type: update
+    params:
+      branch: production
+      message: ${{ needs.get_update_version.outputs.update_version }}
+      # input can later be replaced with defaults.appJson 
+
+  # TODO: add version source skip
